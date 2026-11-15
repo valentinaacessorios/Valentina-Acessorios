@@ -1,0 +1,12 @@
+PURE CLEAN PRO - arquivos atualizados
+
+1) GITHUB: envie TODOS os arquivos da pasta 1-GITHUB-enviar-estes-arquivos
+   (Add file > Upload files). Os 5 icones (.png) ficam soltos, junto com index.html,
+   manifest.webmanifest e sw.js. Depois: Commit changes.
+   (No PDF, onde fala da pasta "icons", ignore: neste pacote os icones ficam soltos.)
+
+2) FIREBASE: abra firebase-regras.json, copie o texto e cole em
+   Realtime Database > Regras. Clique em Publicar.
+   (Se as regras ja foram publicadas, nao precisa repetir.)
+
+Link do sistema: https://purecleanpro.github.io/purecleanpro/
