@@ -105,14 +105,15 @@ td.h-q{text-align:center}
 #burger{background:none;border:2px solid rgba(255,255,255,.7);border-radius:10px;color:#fff;padding:6px;cursor:pointer;display:flex}
 #topTit{font-size:18px;font-weight:700}
 #ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15;display:none}body.menu #ov{display:block}
-#side{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:86vw;background:#06485e;color:#fff;z-index:20;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .2s;overflow-y:auto}
+#side{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:86vw;background:linear-gradient(180deg,#0a7a9a 0%,#06546c 55%,#043f52 100%);color:#fff;z-index:20;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .2s;overflow-y:auto}
 body.menu #side{transform:none}
 .sd-head{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.15)}.sd-id{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.sd-logo{background:#000;border-radius:14px;padding:0;margin-bottom:14px;overflow:hidden;border:1px solid rgba(212,175,55,.45)}.sd-logo img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;object-position:center}
 .sd-head h1{font-size:25px;margin:0;line-height:1.2;color:#fff}
-.pill{background:none;border:1.5px solid #2fd0ec;color:#2fd0ec;border-radius:999px;padding:4px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+#slogan{margin:6px 0 0;font-size:15px;font-style:italic;font-weight:600;color:#ffd24a;text-shadow:0 0 10px rgba(255,200,60,.45)}
+.pill{background:none;border:1.5px solid #ffd24a;color:#ffd24a;border-radius:999px;padding:4px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
 #nav{padding:12px 10px 6px;display:flex;flex-direction:column;gap:6px}
 #nav button{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:1.5px solid rgba(255,255,255,.22);border-radius:12px;color:#e4f9ff;padding:12px 14px;font:inherit;font-size:16px;cursor:pointer}
-#nav button.on{background:#0b7390;border-color:#2fd0ec;color:#fff;font-weight:700}
+#nav button.on{background:#0e8fb3;border-color:#ffd24a;color:#fff;font-weight:700;box-shadow:0 0 12px rgba(255,210,74,.35)}
 .sd-send{padding:6px 10px 12px}
 #btnRel{background:#2fd0ec;color:#04384a;border:0;width:100%;display:flex;gap:10px;justify-content:center;align-items:center;border-radius:12px;padding:12px;font-weight:700}
 .sd-ban{margin-top:auto;background:#2fd0ec;color:#04384a;border:0;width:100%;padding:18px 16px;display:flex;justify-content:space-between;align-items:center;text-align:left;font:inherit;cursor:pointer}
@@ -603,7 +604,7 @@ $('#kVit').onclick=()=>{const L=catSel();if(!L.length)return alert('Marque ao me
 function rLogo(){const l=db.cfg.logo;$('#sdLogo').hidden=!l;if(l)$('#logoImg').src=l;$('#logoPv').innerHTML=l?`<img class="pv" style="width:auto;max-width:100%;height:90px" src="${l}" alt="">`:'';$('#logoDel').hidden=!l}
 $('#logoFile').onchange=$('#logoCam').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,600/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0,c.width,c.height);db.cfg.logo=c.toDataURL('image/jpeg',.82);save();rLogo()};i.src=r.result};r.readAsDataURL(f);e.target.value=''};
 $('#logoDel').onclick=()=>{if(confirm('Remover a foto da loja?')){delete db.cfg.logo;save();rLogo()}};
-function rSlogan(){const e=$('#slogan');e.textContent=db.cfg.slogan||'Seu slogan aqui';e.style.opacity=db.cfg.slogan?1:.55}
+function rSlogan(){const e=$('#slogan');e.textContent=db.cfg.slogan||'Brilho e elegância em cada detalhe'}
 $('#slg').oninput=e=>{db.cfg.slogan=e.target.value;save();rSlogan()};
 $('#loja').oninput=e=>{db.cfg.loja=e.target.value;save();$('#lojaNome').textContent=e.target.value||'VALENTINA ACESSÓRIOS'};
 $('#addDono').onclick=()=>{const n=$('#dNome').value.trim(),t=$('#dTel').value;if(!n||t.replace(/\D/g,'').length<10)return alert('Informe o nome e o WhatsApp com DDD.');db.cfg.donos.push({nome:n,tel:t});save();$('#dNome').value=$('#dTel').value='';rCfg()};
