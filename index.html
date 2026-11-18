@@ -244,7 +244,7 @@ body.menu #side{transform:none}
 <section id="venda"><div class="vg">
  <div class="card"><h2>Escolha os produtos</h2><p class="dica">Toque no produto para colocar na venda.</p><input id="bv" placeholder="Buscar por referência ou marca"><div class="pg" id="pg"></div></div>
  <div class="card"><h2>Venda atual</h2><p class="dica">Confira, escolha como o cliente vai pagar e finalize.</p><div id="cart"></div>
-  <div class="fg2" style="margin-top:10px"><label>Desconto ao cliente<input id="dVal" type="number" min="0" step="0.01" placeholder="0"></label><label>Tipo<select id="dTipo"><option value="r">R$</option><option value="p">%</option></select></label></div>
+  <div class="fg2" style="margin-top:10px"><label>Desconto ao cliente<input id="dVal" type="text" inputmode="numeric" autocomplete="off" placeholder="0,00"></label><label>Tipo<select id="dTipo"><option value="r">R$</option><option value="p">%</option></select></label></div>
   <div id="sumv"></div><div class="tot" id="total">R$ 0,00</div>
   <div class="pay" id="pay">
    <label><input type="radio" name="pg" value="din" checked>Dinheiro</label><label><input type="radio" name="pg" value="pix">Pix</label>
@@ -260,13 +260,13 @@ body.menu #side{transform:none}
  <div class="card"><h2 id="fTit">Novo produto</h2><p class="dica">Preencha os dados e toque em Salvar produto.</p>
  <form id="fp"><input type="hidden" name="pid">
   <div class="fg"><label>Referência<input name="ref" required></label><label>Marca<input name="marca" required></label><label>Descrição (opcional)<input name="desc"></label></div>
-  <div class="fg"><label>Quantidade que você tem agora<input name="qtd" type="number" min="0" step="1" required></label><label>Valor de compra (quanto pagou) R$<input name="compra" type="number" min="0" step="0.01" required></label>
-  <label>Valor de venda (preço ao cliente) R$<input name="venda" type="number" min="0" step="0.01" required></label><label>Quantidade ideal<small style="display:block">O sistema avisa quando tiver menos que isso</small><input name="ideal" type="number" min="0" step="1" required></label></div>
+  <div class="fg"><label>Quantidade que você tem agora<input name="qtd" type="number" min="0" step="1" required></label><label>Valor de compra (quanto pagou) R$<input name="compra" type="text" inputmode="numeric" autocomplete="off" placeholder="0,00" required></label>
+  <label>Valor de venda (preço ao cliente) R$<input name="venda" type="text" inputmode="numeric" autocomplete="off" placeholder="0,00" required></label><label>Quantidade ideal<small style="display:block">O sistema avisa quando tiver menos que isso</small><input name="ideal" type="number" min="0" step="1" required></label></div>
   <div style="margin-bottom:10px"><span style="font-size:13px;color:var(--mut)">Foto do produto</span>
    <div class="row" style="margin-top:4px"><label class="b s bord" style="margin:0;cursor:pointer">Tirar foto<input type="file" id="fotoCam" accept="image/*" capture="environment" hidden></label><label class="b s bord" style="margin:0;cursor:pointer">Escolher da galeria ou arquivos<input type="file" id="foto" accept="image/*" hidden></label></div></div><div id="pv"></div>
   <div class="row" style="margin-top:12px"><button class="b" type="submit">Salvar produto</button><button class="b s" type="button" id="cancel">Cancelar</button></div></form></div>
  <div class="card"><h2>Chegou mercadoria?</h2><p class="dica">Registre aqui para somar no estoque.</p>
- <div class="fg"><label>Produto<select id="eP"></select></label><label>Quantidade recebida<input id="eQ" type="number" min="1" step="1"></label><label>Novo valor de compra (opcional)<input id="eC" type="number" min="0" step="0.01"></label></div>
+ <div class="fg"><label>Produto<select id="eP"></select></label><label>Quantidade recebida<input id="eQ" type="number" min="1" step="1"></label><label>Novo valor de compra (opcional)<input id="eC" type="text" inputmode="numeric" autocomplete="off" placeholder="0,00"></label></div>
  <button class="b" id="eBtn" type="button">Registrar entrada</button><div id="eH" style="margin-top:12px"></div></div>
  <h2 style="margin:6px 2px 4px">Produtos cadastrados</h2><p class="dica" id="uso" style="margin:0 2px 12px"></p><div class="pgrid" id="tbProd"></div>
 </section>
@@ -431,6 +431,14 @@ function rVenda(){const q=$('#bv').value.toLowerCase();
 function add(id){const p=db.prods.find(x=>x.id==id),c=cart.find(x=>x.pid==id);if(c){if(c.qtd<p.qtd)c.qtd++}else cart.push({pid:id,qtd:1});rCart()}
 function chg(id,d){const p=db.prods.find(x=>x.id==id),c=cart.find(x=>x.pid==id);c.qtd=Math.min(p.qtd,c.qtd+d);if(c.qtd<1)cart=cart.filter(x=>x.pid!=id);rCart()}
 const cartTotal=()=>cart.reduce((a,c)=>a+c.qtd*db.prods.find(p=>p.id==c.pid).venda,0);
+/* campos de dinheiro: digite só números e a vírgula entra sozinha (ex.: 1250 vira 12,50) */
+(function(){const d=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value'),fmt=c=>(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const dg=el=>d.get.call(el).replace(/\D/g,'').slice(0,11);
+ [$('#dVal'),$('#eC'),$('#fp').compra,$('#fp').venda].forEach(el=>{
+  Object.defineProperty(el,'value',{configurable:true,get(){const t=dg(el);return t===''?'':(parseInt(t,10)/100).toFixed(2)},
+   set(v){if(v===''||v==null||isNaN(parseFloat(v)))d.set.call(el,'');else d.set.call(el,fmt(Math.round(parseFloat(v)*100)))}});
+  el.addEventListener('input',()=>{const t=dg(el);d.set.call(el,t===''?'':fmt(parseInt(t,10)));try{const n=d.get.call(el).length;el.setSelectionRange(n,n)}catch(e){}});
+ })})();
 const descVal=()=>{const v=Math.max(0,+$('#dVal').value||0),sub=cartTotal();return Math.min(sub,$('#dTipo').value=='p'?Math.round(sub*Math.min(v,100))/100:v)};
 $('#dVal').oninput=()=>rCart();$('#dTipo').onchange=()=>rCart();
 $('#cancV').onclick=()=>{if(!cart.length&&!$('#cNome').value&&!$('#cTel').value&&!$('#dVal').value)return;if(confirm('Cancelar esta venda? Os produtos saem da venda e nada é cobrado.')){cart=[];$('#cNome').value=$('#cTel').value=$('#dVal').value='';rCart()}};
