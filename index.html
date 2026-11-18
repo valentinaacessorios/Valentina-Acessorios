@@ -338,7 +338,7 @@ body.menu #side{transform:none}
 
 <div id="rec"><div class="card"><h2>Venda concluída</h2><div id="recBox" class="cupom"></div><p class="dica" id="recNote" style="margin:0 0 10px">Comprovante finalizado: os dados da venda não podem ser alterados.</p>
  <label>WhatsApp do cliente<input id="recTel" inputmode="tel" placeholder="(11) 99999-9999"></label>
- <div class="row"><button class="b w" id="recWa">Enviar comprovante no WhatsApp</button><button class="b s" id="recPr">Imprimir comprovante</button><button class="b s" id="recX">Fechar</button></div></div></div>
+ <div class="row"><button class="b w" id="recWa">Enviar comprovante no WhatsApp</button><button class="b w" id="recShI">Compartilhar imagem (Instagram, Telegram, e-mail...)</button><button class="b s" id="recShT">Compartilhar texto</button><button class="b s" id="recPr">Imprimir comprovante</button><button class="b s" id="recX">Fechar</button></div></div></div>
 
 <div id="aut"><div class="card"><h2>Relatório do dia</h2><p class="dica" id="autInfo"></p><pre id="autTxt" style="white-space:pre-wrap"></pre><div class="row" id="autBt"></div><div class="row" style="margin-top:10px"><button class="b s" id="autX">Fechar</button></div></div></div>
 
@@ -467,6 +467,17 @@ function reciboHtml(s){const sg=s.slg!==undefined?s.slg:db.cfg.slogan,hr='<div c
 let recS=null;
 function openRec(s){recS=s;$('#recBox').innerHTML=reciboHtml(s);const t=$('#recTel');t.value=s.tel||'';t.readOnly=!!s.tel;$('#rec').classList.add('on')}
 $('#recWa').onclick=()=>wa($('#recTel').value,'```\n'+reciboTxt(recS)+'\n```');
+/* compartilhar comprovante (WhatsApp, Instagram, Telegram, e-mail e outros) */
+function recImg(){return new Promise(ok=>{const L=reciboTxt(recS).split('\n'),fs=24,lh=32,pad=30,c=document.createElement('canvas'),x=c.getContext('2d');
+ x.font=fs+'px "Courier New",monospace';const w=Math.ceil(Math.max(...L.map(l=>x.measureText(l).width)))+pad*2,h=L.length*lh+pad*2;
+ c.width=w;c.height=h;x.fillStyle='#fff';x.fillRect(0,0,w,h);x.fillStyle='#111';x.font=fs+'px "Courier New",monospace';x.textBaseline='top';
+ L.forEach((l,i)=>x.fillText(l,pad,pad+i*lh));c.toBlob(ok,'image/png')})}
+$('#recShI').onclick=async()=>{if(!recS)return;try{const b=await recImg(),f=new File([b],'comprovante-'+recS.id+'.png',{type:'image/png'});
+ if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Comprovante de venda'})}catch(e){if(!e||e.name!=='AbortError')throw e}}
+ else{baixa(f,f.name);alert('Este aparelho não abriu o compartilhamento. A imagem foi baixada: procure em Downloads e envie pelo aplicativo que quiser.')}}catch(e){alert('Não foi possível gerar a imagem do comprovante.')}};
+$('#recShT').onclick=async()=>{if(!recS)return;const t=reciboTxt(recS);
+ if(navigator.share){try{await navigator.share({title:'Comprovante de venda',text:t})}catch(e){}return}
+ try{await navigator.clipboard.writeText(t);alert('Comprovante copiado. Cole na conversa do aplicativo que quiser.')}catch(e){alert('Este aparelho não permite compartilhar. Use o botão do WhatsApp.')}};
 $('#recPr').onclick=()=>print();
 $('#recX').onclick=()=>$('#rec').classList.remove('on');
 
