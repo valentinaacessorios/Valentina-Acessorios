@@ -56,6 +56,7 @@ pre{white-space:pre;background:#fff;padding:16px 14px;font:13px/1.5 ui-monospace
 @media print{header,main{display:none!important}#rec.on{position:static;display:block!important;background:none;padding:0}#rec .card{border:0;padding:0;max-width:none}#rec h2,#rec label,#rec .row{display:none!important}}
 .dica{color:var(--mut);margin:-6px 0 12px}
 @media print{#recBox{border:0!important;box-shadow:none!important;width:80mm;font-size:12px;margin:0!important}#recNote{display:none!important}}@page{margin:6mm}
+#fbm{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:30}#fbm.on{display:flex}#fbm .card{max-width:440px;width:100%;margin:0;max-height:92vh;overflow:auto}
 #aut{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:9}#aut.on{display:flex}#aut .card{max-width:460px;width:100%;margin:0;max-height:92vh;overflow:auto}
 th.ct,td.c-n{text-align:center;white-space:nowrap}
 .bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
@@ -148,6 +149,13 @@ body.menu #side{transform:none}
 .es-r{flex:1;padding:14px;text-align:center}.es-r b{display:block;font-size:22px;color:var(--ink)}.es-r small{display:block;color:var(--mut)}.es-r .b{width:100%;margin-top:8px}
 .es-t{font-size:15px;margin:0 0 6px;color:var(--ink)}
 /* ===== vitrine de produtos ===== */
+.vt{display:flex;gap:8px;margin-top:10px}.vt button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px;font:inherit;font-weight:600;cursor:pointer}.vt button.on{background:var(--blue);border-color:var(--blue);color:#fff}.vt .ic{width:18px;height:18px}
+.plist{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.pr{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;min-width:0}.pr.low{border-color:var(--acc)}
+.pr-img{flex:none;width:36%;max-width:170px;min-width:104px;aspect-ratio:1/1;background:#fff;cursor:zoom-in}
+.pr-img img,.pr-img .ph{width:100%;height:100%;object-fit:contain;border-radius:0;background:#fff;display:block}.pr-img .ph{display:flex;background:#eef8fb}
+.pr-i{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px 0}.pr-i .bd{align-self:flex-start;margin-top:4px}
+.pr-i .pk-n{margin:6px 0 2px}.pr-i .ac{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}.pr-i .ac button{flex:1 1 auto;padding:7px 8px;font-size:13px}
 .ph{display:flex;align-items:center;justify-content:center;color:#7aa9b8}.ph svg{width:46%;height:46%}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:16px}
 @media(max-width:600px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
@@ -238,6 +246,7 @@ body.menu #side{transform:none}
 <section id="estoque">
  <div id="alerta" hidden></div>
  <div class="card"><label>Buscar produto<input id="busca" placeholder="Referência, marca ou descrição"></label>
+ <div class="vt" role="group" aria-label="Modo de visualização"><button type="button" id="vtG" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Grade</button><button type="button" id="vtL" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="6" rx="1"/><rect x="3" y="14" width="6" height="6" rx="1"/><path d="M13 7h8M13 17h8"/></svg>Lista</button></div>
  </div><div class="pgrid" id="tbEst"></div>
 </section>
 
@@ -313,10 +322,11 @@ body.menu #side{transform:none}
  <div class="card" id="instCard"><h2>Instalar como aplicativo</h2><p class="dica">Coloque o sistema na tela inicial do celular, com ícone próprio, e abra como um aplicativo, até sem internet.</p>
   <button class="b" id="instBtn" type="button" hidden>Instalar aplicativo</button><p class="dica" id="instSt" style="margin:8px 0 0"></p></div>
  <div class="card" id="fbCard"><h2>Banco de dados na nuvem (Firebase)</h2><p class="dica">Guarda seus dados na nuvem e mantém seus aparelhos iguais. Para sincronizar é preciso ter internet.</p>
-  <div id="fbCfg"><label>Chave da API (apiKey)<input id="fbKey" autocomplete="off"></label><label>Endereço do banco (databaseURL)<input id="fbUrl" placeholder="https://seu-projeto-default-rtdb.firebaseio.com" autocomplete="off"></label>
+  <div id="fbCfg"><label style="display:none">Chave da API (apiKey)<input id="fbKey" autocomplete="off"></label><label style="display:none">Endereço do banco (databaseURL)<input id="fbUrl" placeholder="https://seu-projeto-default-rtdb.firebaseio.com" autocomplete="off"></label>
    <div class="fg"><label>E-mail de acesso<input id="fbMail" type="email" autocomplete="username"></label><label>Senha<input id="fbPass" type="password" autocomplete="current-password"></label></div>
    <div class="row"><button class="b" id="fbIn" type="button">Entrar</button><button class="b s bord" id="fbUp" type="button">Criar conta</button></div></div>
-  <div id="fbOn" hidden><p id="fbWho" style="margin:0 0 10px;font-weight:600"></p><div class="row"><button class="b" id="fbNow" type="button">Sincronizar agora</button><button class="b d" id="fbOut" type="button">Sair</button></div></div>
+  <div id="fbOn" hidden><p id="fbWho" style="margin:0 0 10px;font-weight:600"></p><div class="row"><button class="b" id="fbNow" type="button">Sincronizar agora</button><button class="b d" id="fbOut" type="button">Sair</button></div>
+   <div id="fbUso" style="margin-top:14px"><h3 style="font-size:15px;margin:0 0 6px;color:var(--ink)">Espaço do banco de dados</h3><div style="height:12px;background:#dff3f8;border-radius:99px;overflow:hidden"><div id="fbUsoB" style="height:100%;width:0;background:var(--blue)"></div></div><p id="fbUsoT" style="margin:6px 0 0;font-weight:600"></p><p class="dica" style="margin:4px 0 0;font-size:13px">Limite do plano gratuito do Firebase: 1 GB. O valor é aproximado e conta os dados desta loja (produtos, vendas, fotos e logo).</p></div></div>
   <p class="dica" id="fbSt" style="margin:10px 0 0"></p>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600;color:var(--ink)">Como configurar (passo a passo)</summary>
    <ol class="dica" style="padding-left:20px;margin:8px 0 0"><li>Acesse <b>console.firebase.google.com</b> e crie um projeto (pode desativar o Google Analytics).</li>
@@ -339,6 +349,11 @@ body.menu #side{transform:none}
 <div id="rec"><div class="card"><h2>Venda concluída</h2><div id="recBox" class="cupom"></div><p class="dica" id="recNote" style="margin:0 0 10px">Comprovante finalizado: os dados da venda não podem ser alterados.</p>
  <label>WhatsApp do cliente<input id="recTel" inputmode="tel" placeholder="(11) 99999-9999"></label>
  <div class="row"><button class="b w" id="recWa">Enviar comprovante no WhatsApp</button><button class="b" id="recShI" aria-label="Compartilhar comprovante" title="Compartilhar" style="display:flex;align-items:center;justify-content:center;padding:10px 14px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button><button class="b s" id="recPr">Imprimir comprovante</button><button class="b s" id="recX">Fechar</button></div></div></div>
+
+<div id="fbm"><div class="card"><h2>Conectar ao banco de dados</h2><p class="dica">Digite o e-mail e a senha de acesso. É só uma vez: depois o app se conecta sozinho e traz seus dados da nuvem.</p>
+ <form id="fbmF" novalidate><label>E-mail<input id="fbmMail" type="email" autocomplete="username"></label><label>Senha<input id="fbmPass" type="password" autocomplete="current-password"></label>
+  <p class="dica" id="fbmMsg" style="margin:0 0 10px;color:#b3261e"></p>
+  <div class="row"><button class="b" id="fbmGo" type="submit">Entrar</button><button class="b s" id="fbmNo" type="button">Agora não</button></div></form></div></div>
 
 <div id="aut"><div class="card"><h2>Relatório do dia</h2><p class="dica" id="autInfo"></p><pre id="autTxt" style="white-space:pre-wrap"></pre><div class="row" id="autBt"></div><div class="row" style="margin-top:10px"><button class="b s" id="autX">Fechar</button></div></div></div>
 
@@ -371,15 +386,19 @@ $$('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.t));
 
 /* estoque */
 function rInicio(){rHero();rEstCard();$('#guia').hidden=db.prods.length>0}
+const vistaGet=()=>{try{return localStorage.getItem('estq_vista')=='lista'?'lista':'grade'}catch(e){return 'grade'}};
+function vistaSet(v){try{localStorage.setItem('estq_vista',v)}catch(e){}rEst()}
 function rEst(){
+ const lista=vistaGet()=='lista';$('#vtG').classList.toggle('on',!lista);$('#vtL').classList.toggle('on',lista);$('#vtG').setAttribute('aria-pressed',String(!lista));$('#vtL').setAttribute('aria-pressed',String(lista));$('#tbEst').className=lista?'plist':'pgrid';
  const q=$('#busca').value.toLowerCase(),low=db.prods.filter(p=>p.qtd<p.ideal),hoje=dkey(Date.now());
  const custo=db.prods.reduce((a,p)=>a+p.qtd*p.compra,0),hojeV=db.sales.filter(s=>dkey(s.ts)==hoje&&!s.canc).reduce((a,s)=>a+s.total,0);
  const al=$('#alerta');al.hidden=!low.length;
  al.innerHTML=low.length?`<b>Atenção: ${low.length} produto(s) com pouco estoque.</b> Comprar mais: ${low.map(p=>esc(p.ref)+' ('+(p.ideal-p.qtd)+')').join(', ')}`:'';
  $('#tbEst').innerHTML=db.prods.filter(p=>(p.ref+p.marca+p.desc).toLowerCase().includes(q)).map(p=>{const r=Math.max(0,p.ideal-p.qtd);
+  if(lista)return `<div class="pr${r?' low':''}"><div class="pr-img" onclick="zoom('${p.id}')">${img(p)}</div><div class="pr-i"><b class="pk-ref">${esc(p.ref)}</b><span class="pk-m">${esc(p.marca)}${p.desc?' · '+esc(p.desc):''}</span><span class="bd ${r?'bd-lo':'bd-ok'}">${r?'Comprar mais: '+r:'Estoque bom'}</span><b class="pk-pr">${R(p.venda)}</b><div class="pk-n"><div><span>Vendidos</span><b>${sold(p.id)}</b></div><div><span>Em estoque</span><b>${p.qtd}</b></div><div><span>Ideal</span><b>${p.ideal}</b></div></div><div class="ac"><button class="b s sm" onclick="verHis('${p.id}')">Histórico</button><button class="b s sm" onclick="edit('${p.id}')">Editar</button><button class="b d sm" onclick="del('${p.id}')">Excluir</button></div></div></div>`;
   return `<div class="pk${r?' low':''}"><div class="pk-img" onclick="zoom('${p.id}')">${img(p)}<span class="bd pk-st ${r?'bd-lo':'bd-ok'}">${r?'Comprar mais: '+r:'Estoque bom'}</span></div><div class="pk-s"><b class="pk-ref">${esc(p.ref)}</b><span class="pk-m">${esc(p.marca)}${p.desc?' · '+esc(p.desc):''}</span></div><div class="pk-b"><div class="pk-n"><div><span>Vendidos</span><b>${sold(p.id)}</b></div><div><span>Em estoque</span><b>${p.qtd}</b></div><div><span>Ideal</span><b>${p.ideal}</b></div></div><div class="ac"><button class="b s sm" onclick="verHis('${p.id}')">Histórico</button><button class="b s sm" onclick="edit('${p.id}')">Editar</button><button class="b d sm" onclick="del('${p.id}')">Excluir</button></div></div></div>`}).join('')||'<div class="vazio" style="grid-column:1/-1">Nenhum produto ainda. Use a aba Cadastrar produtos.</div>';
 }
-$('#busca').oninput=rEst;
+$('#busca').oninput=rEst;$('#vtG').onclick=()=>vistaSet('grade');$('#vtL').onclick=()=>vistaSet('lista');
 
 /* produtos */
 let foto='';
@@ -744,7 +763,8 @@ const FB={get:()=>{let l=null;try{l=localStorage.getItem('estq_fb')}catch(e){}
   return null},
  set:o=>{const j=JSON.stringify(o);try{localStorage.setItem('estq_fb',j)}catch(e){}
   try{document.cookie='estq_fb='+encodeURIComponent(j)+'; max-age=31536000; path='+FBpath()+'; SameSite=Lax'+(location.protocol=='https:'?'; Secure':'')}catch(e){}}};
-const FBc=FB.get,agoraH=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const FB_DEF={key:'AIzaSyAfQeeO7EYj_tHdm6361eo_M6BHDxv_nkA',url:'https://valentina-acessorios-default-rtdb.firebaseio.com'};
+const FBc=()=>{const o=FB.get()||{};return {...o,key:o.key||FB_DEF.key,url:o.url||FB_DEF.url}},agoraH=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 let fbTok=null,fbBusy=false,fbTimer=null,fbUlt=0;const fbSig={};
 const fbStatus=(t,erro)=>{const e=$('#fbSt');if(e){e.textContent=t;e.style.color=erro?'#b3261e':''}};
 const fbOn=()=>{const c=FBc();return !!(c&&c.refresh&&c.ok)};
@@ -769,7 +789,7 @@ async function fbEnviar(){const c=FBc();if(!c||!c.refresh||fbBusy)return;fbBusy=
   const d=JSON.parse(JSON.stringify(db)),fotos={};d.prods.forEach(p=>{if(p.foto){fotos[p.id]=p.foto;p.foto='1'}});const logo=d.cfg.logo||'';d.cfg.logo=logo?'1':'';
   for(const id in fotos){const g=fotos[id].length+':'+fotos[id].slice(-24);if(fbSig[id]!==g){await fbPut('fotos/'+id,fotos[id]);fbSig[id]=g}}
   if(logo){const g=logo.length+':'+logo.slice(-24);if(fbSig.__logo!==g){await fbPut('logo',logo);fbSig.__logo=g}}
-  await fbPut('dados',d);await fbPut('meta',{atualizado:db.cfg.atualizado});FB.set({...FBc(),ok:1,ult:db.cfg.atualizado});fbUlt=Date.now();fbStatus('Sincronizado às '+agoraH()+'.')}
+  await fbPut('dados',d);await fbPut('meta',{atualizado:db.cfg.atualizado});FB.set({...FBc(),ok:1,ult:db.cfg.atualizado});fbUlt=Date.now();fbStatus('Sincronizado às '+agoraH()+'.');rFbUso()}
  catch(e){fbStatus(e.expirou?e.message:'Não foi possível enviar: '+e.message,true)}fbBusy=false}
 async function fbBaixar(m){fbStatus('Baixando da nuvem...');const d=await fbGet('dados');if(!d)throw new Error('A nuvem está vazia.');
  const fotos=(await fbGet('fotos'))||{},logo=d.cfg&&d.cfg.logo?await fbGet('logo'):'';
@@ -804,7 +824,14 @@ async function fbSincronizar(){const c=FBc();if(!c||!c.refresh||fbBusy)return;
   if(loc>m.atualizado)return await fbEnviar();
   fbUlt=Date.now();fbStatus('Tudo sincronizado às '+agoraH()+'.')}
  catch(e){fbStatus(e.message,true)}}
-function rFb(){const c=FBc(),on=!!(c&&c.refresh);$('#fbCfg').hidden=on;$('#fbOn').hidden=!on;if(c){$('#fbKey').value=c.key||'';$('#fbUrl').value=c.url||'';$('#fbMail').value=c.email||''}$('#fbWho').textContent=on?'Conectado como '+c.email:''}
+/* espaço usado no banco de dados (limite gratuito do Firebase: 1 GB) */
+const FB_LIMITE=1e9,tBytes=t=>new TextEncoder().encode(t).length;
+function fbTam(){const d=JSON.parse(JSON.stringify(db));let f=0;d.prods.forEach(p=>{if(p.foto){f+=tBytes(p.id)+p.foto.length+4;p.foto='1'}});const lg=d.cfg.logo||'';d.cfg.logo=lg?'1':'';f+=lg.length;return{dados:tBytes(JSON.stringify(d)),fotos:f,total:tBytes(JSON.stringify(d))+f}}
+const fmtB=n=>n<1e6?Math.max(1,Math.round(n/1e3))+' KB':n<1e9?(n/1e6).toFixed(1).replace('.',',')+' MB':(n/1e9).toFixed(2).replace('.',',')+' GB';
+function rFbUso(){try{const t=fbTam().total,p=t/FB_LIMITE*100,pc=p<0.01?'menos de 0,01':p<1?p.toFixed(2).replace('.',','):p.toFixed(1).replace('.',',');
+ $('#fbUsoB').style.width=Math.min(100,Math.max(t>0?1:0,p))+'%';$('#fbUsoB').style.background=p>=95?'#e5303a':p>=80?'#ff9f0a':'';
+ $('#fbUsoT').textContent='Usado: '+fmtB(t)+' de 1 GB ('+pc+'%)'}catch(e){$('#fbUsoT').textContent=''}}
+function rFb(){const c=FBc(),on=!!(c&&c.refresh);rFbUso();$('#fbCfg').hidden=on;$('#fbOn').hidden=!on;if(c){$('#fbKey').value=c.key||'';$('#fbUrl').value=c.url||'';$('#fbMail').value=c.email||''}$('#fbWho').textContent=on?'Conectado como '+c.email:''}
 async function fbEntrar(modo){const key=$('#fbKey').value.trim(),url=$('#fbUrl').value.trim().replace(/\/+$/,''),email=$('#fbMail').value.trim(),senha=$('#fbPass').value;
  if(!key||!url||!email||!senha)return alert('Preencha a chave da API, o endereço do banco, o e-mail e a senha.');
  if(!/^https:\/\/.+/.test(url))return alert('O endereço do banco deve começar com https://');
@@ -816,7 +843,18 @@ $('#fbOut').onclick=()=>{const c=FBc();FB.set({key:c.key,url:c.url,email:c.email
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&fbOn()&&Date.now()-fbUlt>15000)fbSincronizar()});
 addEventListener('online',()=>{if(fbOn())fbSincronizar()});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
-if(FBc()&&FBc().refresh)fbSincronizar();
+/* tela "Conectar ao banco de dados" */
+function fbmAbrir(){$('#fbmMail').value=FBc().email||'';$('#fbmPass').value='';$('#fbmMsg').textContent='';$('#fbm').classList.add('on')}
+function fbmFechar(){$('#fbm').classList.remove('on')}
+function fbmAgenda(){let viu=false;try{viu=sessionStorage.getItem('fbm_agora_nao')=='1'}catch(e){}if(viu)return;setTimeout(()=>{if(!FBc().refresh)fbmAbrir()},500)}
+$('#fbmNo').onclick=()=>{try{sessionStorage.setItem('fbm_agora_nao','1')}catch(e){}fbmFechar()};
+$('#fbmF').onsubmit=async e=>{e.preventDefault();const m=$('#fbmMail').value.trim(),p=$('#fbmPass').value;
+ if(!m||!p){$('#fbmMsg').textContent='Digite o e-mail e a senha.';return}
+ $('#fbmMsg').textContent='';rFb();$('#fbMail').value=m;$('#fbPass').value=p;
+ $('#fbmGo').disabled=true;try{await fbEntrar('in')}catch(x){}$('#fbmGo').disabled=false;
+ if(FBc().refresh){fbmFechar();$('#fbmPass').value=''}else{$('#fbPass').value='';$('#fbmMsg').textContent=$('#fbSt').textContent||'Não foi possível conectar.'}};
+/* ordem ao abrir: ativação por link (não existe neste arquivo) > login salvo > tela de conexão */
+if(FBc().refresh)fbSincronizar();else fbmAgenda();
 $('#lojaNome').textContent=db.cfg.loja||'VALENTINA ACESSÓRIOS';rSlogan();rLogo();
 show('inicio');
 </script></body></html>
